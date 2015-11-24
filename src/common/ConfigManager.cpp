@@ -375,7 +375,7 @@ struct option argOptions[] = {
 	{ "use-bios-file-gb", no_argument, &useBiosFileGB, 1 },
 	{ "use-bios-file-gba", no_argument, &useBiosFileGBA, 1 },
 	{ "use-bios-file-gbc", no_argument, &useBiosFileGBC, 1 },
-	{ "verbose", required_argument, 0, 'v' },
+	{ "verbose", optional_argument, 0, 'v' },
 	{ "video-option", required_argument, 0, OPT_VIDEO_OPTION },
 	{ "vsync", no_argument, &vsync, 1 },
 	{ "win-gb-printer-enabled", no_argument, &winGbPrinterEnabled, 1 },
@@ -974,7 +974,7 @@ int ReadOpts(int argc, char ** argv)
 				systemVerbose = atoi(optarg);
 			}
 			else
-				systemVerbose = 0;
+				systemVerbose = 1;
 			break;
 		case '?':
 			optPrintUsage = 1;
