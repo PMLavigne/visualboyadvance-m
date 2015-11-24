@@ -367,8 +367,20 @@ bool OpenAL::LoadOAL()
 	        !Lib.Load(wxT("openal32")) &&
 #else
 #ifdef __WXMAC__
+// For some reason the normal method doesn't load correctly for me on OSX 10.11, but going directly
+// to the standard install path does -PMLavigne
+#ifdef OSX_OPENAL_CUSTOM_PATH
+// Define some temporary helper macros for quoting the path string. Yes there needs to be two, nested.
+#define TEMP_Q(x) #x
+#define TEMP_QUOTE(x) TEMP_Q(x)
+			!Lib.Load(wxT(TEMP_QUOTE(OSX_OPENAL_CUSTOM_PATH)), wxDL_NOW | wxDL_VERBATIM) &&
+// Remove the helper macros now that we're done with them
+#undef TEMP_QUOTE
+#undef TEMP_Q
+#else
 	        // on macosx, it's just plain OpenAL
 	        !Lib.Load(wxT("OpenAL"), wxDL_NOW | wxDL_VERBATIM) &&
+#endif
 #endif
 #endif
 	        // on linux, it's libopenal.so

@@ -81,6 +81,15 @@ IF(APPLE)
     link_directories("/opt/local/lib")
     include_directories("/opt/local/include")
 
+    # By default, OpenAL should be loadable on OSX by just loading the string "OpenAL", however on my mac running 10.11
+    # this fails and OpenAL must be loaded by explicitly setting the path to the library. By default this is:
+    # /System/Library/Frameworks/OpenAL.framework/OpenAL
+    #
+    # -PMLavigne
+    IF(OSX_OPENAL_CUSTOM_PATH)
+        ADD_DEFINITIONS(-DOSX_OPENAL_CUSTOM_PATH="${OSX_OPENAL_CUSTOM_PATH}")
+    ENDIF()
+
     # and compile as Objective-C++ for ObjectiveC #ifdefs
     SET(CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> -x objective-c++ <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
 ENDIF()
