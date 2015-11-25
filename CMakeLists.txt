@@ -21,6 +21,7 @@ option( ENABLE_ASM_SCALERS "Enable x86 ASM graphic filters" OFF )
 option( ENABLE_LINK "Enable GBA linking functionality" OFF )
 option( ENABLE_LIRC "Enable LIRC support" OFF )
 option( ENABLE_FFMPEG "Enable ffmpeg A/V recording" OFF )
+option( ENABLE_ISPC "Enable Intel SPMD Program Compiler" OFF )
 if(ENABLE_ASM_SCALERS)
     option( ENABLE_MMX "Enable MMX" OFF )
 endif(ENABLE_ASM_SCALERS)
@@ -360,6 +361,9 @@ SET(SRC_HQ_ASM
     src/filters/hq/asm/hq3x32.cpp
 )
 
+SET(SRC_ISPC
+)
+
 if( ENABLE_ASM_SCALERS )
     SET(SRC_FILTERS ${SRC_FILTERS} ${SRC_HQ_ASM})
 else( ENABLE_ASM_SCALERS )
@@ -388,6 +392,17 @@ IF( ENABLE_FFMPEG )
     )
 ENDIF( ENABLE_FFMPEG )
 
+if (ENABLE_ISPC)
+    include(CMakeScripts/FindISPC.cmake)
+    set(ISPC_OBJECTS)
+    foreach(srcFile ${SRC_ISPC})
+        ispc_compile(${CMAKE_CURRENT_SOURCE_DIR}/${srcFile} ispc_temp_obj_variable)
+        list(APPEND ISPC_OBJECTS ${ispc_temp_obj_variable})
+    endforeach()
+    INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/include")
+endif ()
+
+message(STATUS "ispc lib: ${simple_ispc_lib}" )
 ADD_LIBRARY (
     vbamcore
     STATIC
@@ -398,6 +413,7 @@ ADD_LIBRARY (
     ${SRC_APU}
     ${SRC_FILTERS}
     ${SRC_DEBUGGER}
+    ${ISPC_OBJECTS}
 )
 
 IF( ENABLE_SDL )
