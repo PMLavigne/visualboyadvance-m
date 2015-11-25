@@ -21,6 +21,9 @@
 	hq filter by Maxim Stepin ( http://hiend3d.com )
 */
 
+#ifdef ENABLE_ISPC
+#include <ispc/hq4x.h>
+#endif
 
 #ifdef _16BIT
 #ifdef _32BIT
@@ -32,6 +35,7 @@
 #ifdef _16BIT
 #define SIZE_PIXEL  2 // 16bit = 2 bytes
 #define COLORTYPE   unsigned short
+#define AllRGBtoYUV ispc::AllRGBtoYUV_16
 #define RGBtoYUV    RGBtoYUV_16
 #define Interp1     Interp1_16
 #define Interp2     Interp2_16
@@ -47,6 +51,7 @@
 #ifdef _32BIT
 #define SIZE_PIXEL  4 // 32bit = 4 bytes
 #define COLORTYPE   unsigned int
+#define AllRGBtoYUV ispc::AllRGBtoYUV_32
 #define RGBtoYUV    RGBtoYUV_32
 #define Interp1     Interp1_32
 #define Interp2     Interp2_32
@@ -381,6 +386,23 @@ int Xres, int Yres )
 			unsigned int pattern = 0;
 			unsigned int flag = 1;
 
+#ifdef ENABLE_ISPC
+            AllRGBtoYUV(c, yuv, 9);
+
+			for (unsigned char k = 1; k <= 9; k++) {
+				if (k == 5) continue;
+
+				if (c[k] != c[5]) {
+					if ((abs_32((yuv[5] & 0x00FF0000) - (yuv[k] & 0x00FF0000)) > 0x00300000) ||
+						(abs_32((yuv[5] & 0x0000FF00) - (yuv[k] & 0x0000FF00)) > 0x00000700) ||
+						(abs_32((yuv[5] & 0x000000FF) - (yuv[k] & 0x000000FF)) > 0x00000006)
+							) {
+						pattern |= flag;
+					}
+				}
+				flag <<= 1;
+			}
+#else
 			yuv[5] = RGBtoYUV( c[5] );
 
 			for( unsigned char k = 1; k <= 9; k++)
@@ -402,6 +424,7 @@ int Xres, int Yres )
 				}
 				flag <<= 1;
 			}
+#endif
 
 #ifdef _HQ3X
 #include "hq3x_pattern.h"
@@ -439,6 +462,7 @@ void hq4x32_32(unsigned char *pIn,  unsigned int srcPitch, unsigned char *, unsi
 #undef COLORTYPE
 #undef _MAGNIFICATION
 #undef RGBtoYUV
+#undef AllRGBtoYUV
 #undef Interp1
 #undef Interp2
 #undef Interp3

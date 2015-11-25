@@ -362,6 +362,7 @@ SET(SRC_HQ_ASM
 )
 
 SET(SRC_ISPC
+    src/ispc/hq4x.ispc
 )
 
 if( ENABLE_ASM_SCALERS )
@@ -399,7 +400,8 @@ if (ENABLE_ISPC)
         ispc_compile(${CMAKE_CURRENT_SOURCE_DIR}/${srcFile} ispc_temp_obj_variable)
         list(APPEND ISPC_OBJECTS ${ispc_temp_obj_variable})
     endforeach()
-    INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/include")
+    INCLUDE_DIRECTORIES("${CMAKE_CURRENT_BINARY_DIR}/ispc_output/include")
+    ADD_DEFINITIONS(-DENABLE_ISPC)
 endif ()
 
 message(STATUS "ispc lib: ${simple_ispc_lib}" )
