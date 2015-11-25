@@ -1,10 +1,10 @@
 
 
-export void AllRGBtoYUV_16(uniform unsigned int16 rgb[], uniform unsigned int32 yuv[], uniform unsigned int count)
+export void AllRGBtoYUV_16(const uniform unsigned int16 rgb[], uniform unsigned int32 yuv[], uniform unsigned int count)
 {
-    foreach(index = 0 ... count) {
-        unsigned int16 color = rgb[index + 1];
-        unsigned int8 r, g, b;
+    foreach(index = 1 ... count) {
+        unsigned int32 color = rgb[index];
+        unsigned int32 r, g, b;
 
 #ifdef RGB555
         r = ( color & 0x7C00 ) >> 7;
@@ -16,17 +16,17 @@ export void AllRGBtoYUV_16(uniform unsigned int16 rgb[], uniform unsigned int32 
         b = (color & 0x001F) << 3;
 #endif
 
-        yuv[index + 1] = ((r + g + b) << 14) +
+        yuv[index] = ((r + g + b) << 14) +
                      ((r - b + 512) << 4) +
                      ((2 * g - r - b) >> 3) + 128;
     }
 }
 
-export void AllRGBtoYUV_32(uniform unsigned int32 rgb[], uniform unsigned int32 yuv[], uniform unsigned int count)
+export void AllRGBtoYUV_32(const uniform unsigned int32 rgb[], uniform unsigned int32 yuv[], uniform unsigned int count)
 {
-    foreach(index = 0 ... count) {
-        unsigned int32 color = rgb[index + 1];
-        unsigned int8 r, g, b;
+    foreach(index = 1 ... count) {
+        unsigned int32 color = rgb[index];
+        unsigned int32 r, g, b;
 
         b = color & 0x0000FF;
         g = (color & 0x00FF00) >> 8;

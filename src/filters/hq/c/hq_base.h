@@ -387,7 +387,7 @@ int Xres, int Yres )
 			unsigned int flag = 1;
 
 #ifdef ENABLE_ISPC
-            AllRGBtoYUV(c, yuv, 9);
+            AllRGBtoYUV(c, yuv, 10);
 
 			for (unsigned char k = 1; k <= 9; k++) {
 				if (k == 5) continue;
